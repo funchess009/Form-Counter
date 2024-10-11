@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compteur d'Articles</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            margin: 20px;
+            line-height: 1.6;
+        }
+
+        h1 {
+            text-align: center;
+            color: #f5f5f5;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            background: #1e1e1e;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .section-title {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #9e9e9e;
+            border-bottom: 2px solid #333;
+            padding-bottom: 5px;
+        }
+
+        .item {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #333;
+            padding: 10px 0;
+        }
+
+        .item-name {
+            font-weight: bold;
+            flex: 1;
+            margin-right: 10px;
+            color: #e0e0e0;
+        }
+
+        button {
+            margin-right: 5px;
+            padding: 8px 12px;
+            background-color: #6200ea;
+            border: none;
+            border-radius: 6px;
+            color: #e0e0e0;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #3700b3;
+        }
+
+        .count {
+            display: inline-block;
+            width: 30px;
+            text-align: center;
+            font-weight: bold;
+            color: #bb86fc;
+        }
+
+        .reset-button {
+            background-color: #cf6679;
+            margin: 0 auto 20px auto;
+            display: block;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            padding: 10px 15px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .reset-button:hover {
+            background-color: #b00020;
+        }
+
+        .frequency-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .frequency-button {
+            flex: 1 1 calc(33.33% - 10px);
+            display: flex;
+            justify-content: space-between;
+            background-color: #333;
+            border: 1px solid #444;
+            padding: 10px;
+            border-radius: 6px;
+            color: #e0e0e0;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            cursor: pointer;
+        }
+
+        .frequency-button:hover {
+            background-color: #555;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Compteur d'Articles</h1>
+    <button class="reset-button" id="reset-all">Réinitialiser Tout</button>
+
+    <div class="section">
+        <div class="section-title">Collations</div>
+        <div id="items-container"></div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">À quelle fréquence voulez-vous acheter des collations ?</div>
+        <div id="snacks-frequency-container" class="frequency-container"></div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">À quelle fréquence voulez-vous acheter des repas ?</div>
+        <div id="meals-frequency-container" class="frequency-container"></div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Genre</div>
+        <div id="gender-container" class="frequency-container"></div>
+    </div>
+
+    <script>
+        const items = [
+            "Lollipops",
+            "Chips",
+            "Biscuits",
+            "Pop tarts",
+            "Jus",
+            "Pretzels",
+            "Chocolats",
+            "Gold fish",
+            "Popcorn",
+            "Freezies",
+            "Boîtes de céréales",
+            "Pizza pochettes",
+            "Nouilles Ramen",
+            "Donuts",
+            "Crème glacée",
+            "Barres tendres",
+            "Popsicles",
+            "Chocolat chaud"
+        ];
+
+        const frequencies = [
+            "Chaque jour",
+            "Quelques fois par semaine",
+            "Chaque semaine",
+            "Chaque mois",
+            "Rarement",
+            "Jamais"
+        ];
+
+        const genders = ["Garçon", "Fille", "Autre"];
+
+        const container = document.getElementById('items-container');
+        const snacksFrequencyContainer = document.getElementById('snacks-frequency-container');
+        const mealsFrequencyContainer = document.getElementById('meals-frequency-container');
+        const genderContainer = document.getElementById('gender-container');
+        const resetAllButton = document.getElementById('reset-all');
+
+        const counts = [];
+
+        // Crée des compteurs pour les articles
+        items.forEach(item => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'item';
+
+            const itemName = document.createElement('div');
+            itemName.className = 'item-name';
+            itemName.textContent = item;
+            itemDiv.appendChild(itemName);
+
+            const yesCount = createButton('Oui', itemDiv);
+            const maybeCount = createButton('Peut-être', itemDiv);
+            const noCount = createButton('Non', itemDiv);
+
+            counts.push(yesCount, maybeCount, noCount);
+            container.appendChild(itemDiv);
+        });
+
+        // Crée des compteurs de fréquence pour les collations
+        frequencies.forEach(freq => {
+            const freqDiv = createFrequencyButton(freq, snacksFrequencyContainer);
+            counts.push(freqDiv);
+        });
+
+        // Crée des compteurs de fréquence pour les repas
+        frequencies.forEach(freq => {
+            const freqDiv = createFrequencyButton(freq, mealsFrequencyContainer);
+            counts.push(freqDiv);
+        });
+
+        // Crée des compteurs de genre
+        genders.forEach(gender => {
+            const genderDiv = createFrequencyButton(gender, genderContainer);
+            counts.push(genderDiv);
+        });
+
+        // Réinitialise tous les compteurs lorsque le bouton "Réinitialiser Tout" est cliqué
+        resetAllButton.addEventListener('click', () => {
+            counts.forEach(countSpan => {
+                countSpan.textContent = '0';
+            });
+        });
+
+        // Fonction pour créer les boutons Oui, Peut-être et Non avec des compteurs
+        function createButton(label, parentDiv) {
+            const button = document.createElement('button');
+            button.textContent = label;
+
+            const countSpan = document.createElement('span');
+            countSpan.className = 'count';
+            countSpan.textContent = '0';
+
+            button.addEventListener('click', () => {
+                countSpan.textContent = parseInt(countSpan.textContent) + 1;
+            });
+
+            parentDiv.appendChild(button);
+            parentDiv.appendChild(countSpan);
+
+            return countSpan;
+        }
+
+        // Fonction pour créer les boutons de fréquence avec des compteurs
+        function createFrequencyButton(label, parentDiv) {
+            const button = document.createElement('div');
+            button.className = 'frequency-button';
+            button.textContent = label;
+
+            const countSpan = document.createElement('span');
+            countSpan.className = 'count';
+            countSpan.textContent = '0';
+
+            button.appendChild(countSpan);
+
+            button.addEventListener('click', () => {
+                countSpan.textContent = parseInt(countSpan.textContent) + 1;
+            });
+
+            parentDiv.appendChild(button);
+
+            return countSpan;
+        }
+    </script>
+</body>
+
+</html>
