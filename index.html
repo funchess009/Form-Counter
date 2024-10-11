@@ -9,29 +9,27 @@
         body {
             font-family: 'Arial', sans-serif;
             background-color: #121212;
-            color: #e0e0e0;
             margin: 20px;
-            line-height: 1.6;
+            color: #e0e0e0;
         }
 
         h1 {
             text-align: center;
-            color: #f5f5f5;
-            margin-bottom: 30px;
+            color: #ffffff;
         }
 
         .section {
             background: #1e1e1e;
-            border-radius: 12px;
+            border-radius: 8px;
             padding: 20px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
 
         .section-title {
             font-size: 22px;
             margin-bottom: 15px;
-            color: #9e9e9e;
+            color: #ffffff;
             border-bottom: 2px solid #333;
             padding-bottom: 5px;
         }
@@ -41,30 +39,29 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border-bottom: 1px solid #333;
-            padding: 10px 0;
         }
 
         .item-name {
             font-weight: bold;
             flex: 1;
             margin-right: 10px;
-            color: #e0e0e0;
+            color: #bdbdbd;
         }
 
         button {
             margin-right: 5px;
             padding: 8px 12px;
-            background-color: #6200ea;
+            background-color: #3b82f6;
             border: none;
-            border-radius: 6px;
-            color: #e0e0e0;
+            border-radius: 4px;
+            color: #ffffff;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, transform 0.2s;
         }
 
         button:hover {
-            background-color: #3700b3;
+            background-color: #2563eb;
+            transform: scale(1.05);
         }
 
         .count {
@@ -72,22 +69,21 @@
             width: 30px;
             text-align: center;
             font-weight: bold;
-            color: #bb86fc;
+            color: #ffffff;
         }
 
         .reset-button {
-            background-color: #cf6679;
+            background-color: #ef4444;
             margin: 0 auto 20px auto;
             display: block;
             font-size: 16px;
-            transition: background-color 0.3s ease;
-            padding: 10px 15px;
-            border-radius: 6px;
-            text-align: center;
+            color: #ffffff;
+            transition: background-color 0.3s ease, transform 0.2s;
         }
 
         .reset-button:hover {
-            background-color: #b00020;
+            background-color: #b91c1c;
+            transform: scale(1.05);
         }
 
         .frequency-container {
@@ -101,17 +97,17 @@
             flex: 1 1 calc(33.33% - 10px);
             display: flex;
             justify-content: space-between;
-            background-color: #333;
-            border: 1px solid #444;
-            padding: 10px;
-            border-radius: 6px;
+            background-color: #2d2d2d;
+            border: 1px solid #555;
+            padding: 8px;
+            border-radius: 4px;
             color: #e0e0e0;
-            transition: background-color 0.3s ease, transform 0.2s ease;
+            transition: background-color 0.3s ease, transform 0.2s;
             cursor: pointer;
         }
 
         .frequency-button:hover {
-            background-color: #555;
+            background-color: #444;
             transform: scale(1.05);
         }
     </style>
@@ -122,8 +118,18 @@
     <button class="reset-button" id="reset-all">Réinitialiser Tout</button>
 
     <div class="section">
+        <div class="section-title">Genre</div>
+        <div id="gender-container" class="frequency-container"></div>
+    </div>
+
+    <div class="section">
         <div class="section-title">Collations</div>
         <div id="items-container"></div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Repas</div>
+        <div id="meals-container"></div>
     </div>
 
     <div class="section">
@@ -136,21 +142,16 @@
         <div id="meals-frequency-container" class="frequency-container"></div>
     </div>
 
-    <div class="section">
-        <div class="section-title">Genre</div>
-        <div id="gender-container" class="frequency-container"></div>
-    </div>
-
     <script>
         const items = [
-            "Lollipops",
+            "Sucettes",
             "Chips",
             "Biscuits",
             "Pop tarts",
             "Jus",
-            "Pretzels",
+            "Bretzels",
             "Chocolats",
-            "Gold fish",
+            "Poisson d'or",
             "Popcorn",
             "Freezies",
             "Boîtes de céréales",
@@ -163,18 +164,28 @@
             "Chocolat chaud"
         ];
 
+        const meals = [
+            "Burgers",
+            "Lasagne",
+            "Happy Meal",
+            "Tacos",
+            "Hotdogs",
+            "Kraft Dinner"
+        ];
+
         const frequencies = [
-            "Chaque jour",
+            "Une fois par jour",
             "Quelques fois par semaine",
-            "Chaque semaine",
+            "Une fois par semaine",
             "Chaque mois",
             "Rarement",
             "Jamais"
         ];
 
-        const genders = ["Garçon", "Fille", "Autre"];
+        const genders = ["Homme", "Femme", "Autre"];
 
         const container = document.getElementById('items-container');
+        const mealsContainer = document.getElementById('meals-container');
         const snacksFrequencyContainer = document.getElementById('snacks-frequency-container');
         const mealsFrequencyContainer = document.getElementById('meals-frequency-container');
         const genderContainer = document.getElementById('gender-container');
@@ -182,7 +193,7 @@
 
         const counts = [];
 
-        // Crée des compteurs pour les articles
+        // Crée des compteurs pour les collations
         items.forEach(item => {
             const itemDiv = document.createElement('div');
             itemDiv.className = 'item';
@@ -198,6 +209,24 @@
 
             counts.push(yesCount, maybeCount, noCount);
             container.appendChild(itemDiv);
+        });
+
+        // Crée des compteurs pour les repas
+        meals.forEach(meal => {
+            const mealDiv = document.createElement('div');
+            mealDiv.className = 'item';
+
+            const mealName = document.createElement('div');
+            mealName.className = 'item-name';
+            mealName.textContent = meal;
+            mealDiv.appendChild(mealName);
+
+            const yesCount = createButton('Oui', mealDiv);
+            const maybeCount = createButton('Peut-être', mealDiv);
+            const noCount = createButton('Non', mealDiv);
+
+            counts.push(yesCount, maybeCount, noCount);
+            mealsContainer.appendChild(mealDiv);
         });
 
         // Crée des compteurs de fréquence pour les collations
